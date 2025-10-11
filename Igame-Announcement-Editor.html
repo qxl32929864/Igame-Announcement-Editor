@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IGAME公告编辑器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        
+        .panel {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+            height: 100%;
+        }
+        
+        .panel-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+        }
+        
+        .panel-title i {
+            margin-right: 8px;
+            color: #3498db;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 300px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 14px;
+            resize: vertical;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        
+        .format-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        button {
+            padding: 8px 12px;
+            background: #f0f2f5;
+            border: 1px solid #e0e3e7;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        button:hover {
+            background: #e9f0f7;
+            border-color: #cfd8dc;
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        .special-controls {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .control-group {
+            margin-bottom: 12px;
+        }
+        
+        .control-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .control-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .preview {
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 13px;
+            background: white;
+            color: #333;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            height: 300px;
+            overflow: auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .instructions {
+            background: #e8f4fc;
+            border-left: 4px solid #3498db;
+            padding: 12px;
+            border-radius: 0 4px 4px 0;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        
+        .sample-text {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 12px;
+            font-size: 13px;
+            margin: 15px 0;
+        }
+        
+        .color-picker {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .color-option {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 1px solid #ddd;
+        }
+        
+        .color-option:hover {
+            transform: scale(1.1);
+            border-color: #333;
+        }
+        
+        .color-option.selected {
+            border: 2px solid #333;
+            transform: scale(1.1);
+        }
+        
+        .generate-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-weight: 600;
+            margin-top: 15px;
+            width: 100%;
+            font-size: 16px;
+        }
+        
+        .generate-btn:hover {
+            background: #219653;
+        }
+        
+        .clear-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-weight: 500;
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        .clear-btn:hover {
+            background: #c0392b;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .required {
+            color: #e74c3c;
+            margin-left: 3px;
+        }
+        
+        .history-controls {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .history-btn {
+            background: #f0f2f5;
+            border: 1px solid #e0e3e7;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        
+        .history-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .hint {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>IGAME公告编辑器</h1>
+        <p>将普通文本转换为IGAME公告需求的特殊文本，工作室内部使用</p>
+        <p>编辑器使用过程中需要维护、发现BUG等问题找：秦绪亮</p>
+    </div>
+    
+    <div class="container">
+        <div class="panel">
+            <div class="panel-title">文本输入</div>
+            
+            <div class="instructions">
+                <strong>使用说明：</strong>
+                <ol>
+                    <li>填写顶部的必填信息</li>
+                    <li>在左侧输入文本内容</li>
+                    <li>选中需要格式化的文字</li>
+                    <li>点击下方格式按钮应用样式</li>
+                    <li>可多次添加不同格式</li>
+                    <li>编辑完成后点击"生成"按钮获取结果</li>
+                </ol>
+            </div>
+            
+            <!-- 新增的必填字段 -->
+            <div class="form-group">
+                <label>缩略图标题 <span class="required">*</span></label>
+                <input type="text" id="thumbTitle" placeholder="例如：版本更新公告">
+                <span class="hint">(6字及以内)</span>
+            </div>
+            
+            <div class="form-group">
+                <label>缩略图网址 <span class="required">*</span></label>
+                <input type="text" id="thumbUrl" placeholder="例如：http://example.com/title.png">
+                <span class="hint">替换模板后上传标准图，获取网址</span>
+            </div>
+            
+            <div class="form-group">
+                <label>顶部标题 <span class="required">*</span></label>
+                <input type="text" id="topTitle" placeholder="例如：内部测试版本更新公告">
+                <span class="hint">(14字及以内)</span>
+            </div>
+            
+            <div class="form-group">
+                <label>重要公告 <span class="required">*</span></label>
+                <select id="importantOption">
+                    <option value="true">是</option>
+                    <option value="false">否</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>显示红点 <span class="required">*</span></label>
+                <select id="showMarkOption">
+                    <option value="true">是</option>
+                    <option value="false">否</option>
+                </select>
+            </div>
+            
+            <div class="instructions" style="margin-top: 5px; margin-bottom: 15px;">
+                <strong>注意：</strong>以上信息均为必填项，缺少任一信息将无法生成结果
+            </div>
+            
+            <textarea id="inputText" placeholder="在此输入您的文本内容...">意大利面必须拌42号混凝土</textarea>
+            
+            <div class="history-controls">
+                <button class="history-btn" id="undoBtn">撤销 (Ctrl+Z)</button>
+                <button class="history-btn" id="redoBtn" disabled>重做 (Ctrl+Y)</button>
+            </div>
+            
+            <div class="format-bar">
+                <button data-format='align="center"'>居中</button>
+                <button data-format='align="left"'>左对齐</button>
+                <button data-format='align="right"'>右对齐</button>
+                <button data-format="color">颜色</button>
+            </div>
+            
+            <div class="format-bar">
+                <button data-format="b">加粗</button>
+                <button data-format="i">斜体</button>
+                <button data-format="u">下划线</button>
+                <button data-format="s">删除线</button>
+            </div>
+            
+            <div class="format-bar">
+                <button data-format="sup">上标</button>
+                <button data-format="sub">下标</button>
+                <button id="linkButton">添加链接</button>
+                <button id="imageButton">添加图片</button>
+            </div>
+            
+            <div class="special-controls">
+                <div class="control-group">
+                    <label for="linkUrl">链接地址:</label>
+                    <input type="text" id="linkUrl" placeholder="https://example.com    " value="http://www.baidu.com">
+                </div>
+                
+                <div class="control-group">
+                    <label for="imageUrl">图片地址:</label>
+                    <input type="text" id="imageUrl" placeholder="https://example.com/image.png    " value="http://10.236.13.23:8088/texture/10.png">
+                    <span class="hint">高度建议不超过668，宽度最多390</span>
+                </div>
+                
+                <div class="control-group">
+                    <label>颜色选择:</label>
+                    <div class="color-picker">
+                        <div class="color-option" style="background-color: #FF0000" data-color="#FF0000"></div>
+                        <div class="color-option" style="background-color: #0000FF" data-color="#0000FF"></div>
+                        <div class="color-option" style="background-color: #00FF00" data-color="#00FF00"></div>
+                        <div class="color-option" style="background-color: #FFFF00" data-color="#FFFF00"></div>
+                        <div class="color-option" style="background-color: #FF00FF" data-color="#FF00FF"></div>
+                        <div class="color-option" style="background-color: #00FFFF" data-color="#00FFFF"></div>
+                        <div class="color-option" style="background-color: #FFFFFF" data-color="#FFFFFF"></div>
+                        <div class="color-option" style="background-color: #000000" data-color="#000000"></div>
+                        <div class="color-option" style="background-color: #FFA500" data-color="#FFA500"></div>
+                        <div class="color-option" style="background-color: #800080" data-color="#800080"></div>
+                        <div class="color-option" style="background-color: #008080" data-color="#008080"></div>
+                        <div class="color-option" style="background-color: #808080" data-color="#808080"></div>
+                    </div>
+                </div>
+                
+                <button id="addLinkButton" class="btn-primary" style="width: 100%;">确认添加链接</button>
+                
+                <button id="generateButton" class="generate-btn">生成结果</button>
+                <button id="clearButton" class="clear-btn">清空输入</button>
+            </div>
+        </div>
+        
+        <div class="panel">
+            <div class="panel-title">生成结果</div>
+            <div class="instructions">
+                <strong>输出格式说明：</strong>
+                <ul>
+                    <li>&nbsp;&nbsp;&nbsp;输出纯文本JSON，不带任何格式</li>
+                    <li>&nbsp;&nbsp;&nbsp;换行符正确显示为\n</li>
+                    <li>&nbsp;&nbsp;&nbsp;图片可插入到文本任意位置</li>
+                    <li>&nbsp;&nbsp;&nbsp;包含所有必填字段</li>
+                </ul>
+            </div>
+            <div class="preview" id="preview"></div>
+            <div class="instructions" style="margin-top: 15px;">
+                <strong>使用提示：</strong>直接复制上述文字到公告后台的文本框，忽略公告后台的其他选项
+            </div>
+        </div>
+    </div>
+
+    <div class="sample-text" style="margin-top: 20px;">
+        <strong>输出示例：</strong>
+        <pre>{
+    "titleText" : "版本更新公告",
+    "titleTexture" : "http://10.236.13.23:8088/title/title02.png",
+    "important" : true,
+    "showMark" : true,
+    "cells" : [ {
+      "_type" : 0,
+      "_content" : "内部测试版本更新公告"
+    }, {
+      "_type" : 2,
+      "_content" : "http://10.236.13.23:8088/texture/10.png"
+    }, {
+      "_type": 1,
+      "_content": "内部测试版本更新公告\n为了您在内部测试版本有更好的游戏体验..."
+    }]
+}</pre>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputText = document.getElementById('inputText');
+            const preview = document.getElementById('preview');
+            const linkUrl = document.getElementById('linkUrl');
+            const imageUrl = document.getElementById('imageUrl');
+            const addLinkButton = document.getElementById('addLinkButton');
+            const linkButton = document.getElementById('linkButton');
+            const imageButton = document.getElementById('imageButton');
+            const generateButton = document.getElementById('generateButton');
+            const clearButton = document.getElementById('clearButton');
+            const undoBtn = document.getElementById('undoBtn');
+            const redoBtn = document.getElementById('redoBtn');
+            
+            // 必填字段
+            const thumbTitle = document.getElementById('thumbTitle');
+            const thumbUrl = document.getElementById('thumbUrl');
+            const topTitle = document.getElementById('topTitle');
+            const importantOption = document.getElementById('importantOption');
+            const showMarkOption = document.getElementById('showMarkOption');
+            
+            // 选中的颜色
+            let selectedColor = "#FF0000";
+            
+            // 历史记录栈
+            const history = {
+                states: [],
+                currentIndex: -1,
+                maxHistory: 50,
+                saveState: function() {
+                    // 保存当前所有状态
+                    const state = {
+                        inputText: inputText.value,
+                        thumbTitle: thumbTitle.value,
+                        thumbUrl: thumbUrl.value,
+                        topTitle: topTitle.value,
+                        importantOption: importantOption.value,
+                        showMarkOption: showMarkOption.value
+                    };
+                    
+                    // 如果当前不是历史栈的末尾，需要截断后面的历史
+                    if (this.currentIndex < this.states.length - 1) {
+                        this.states = this.states.slice(0, this.currentIndex + 1);
+                    }
+                    
+                    // 添加新状态
+                    this.states.push(state);
+                    
+                    // 限制历史长度
+                    if (this.states.length > this.maxHistory) {
+                        this.states.shift();
+                    }
+                    
+                    this.currentIndex = this.states.length - 1;
+                    this.updateButtons();
+                },
+                undo: function() {
+                    if (this.currentIndex > 0) {
+                        this.currentIndex--;
+                        this.restoreState();
+                        this.updateButtons();
+                    }
+                },
+                redo: function() {
+                    if (this.currentIndex < this.states.length - 1) {
+                        this.currentIndex++;
+                        this.restoreState();
+                        this.updateButtons();
+                    }
+                },
+                restoreState: function() {
+                    const state = this.states[this.currentIndex];
+                    if (state) {
+                        inputText.value = state.inputText;
+                        thumbTitle.value = state.thumbTitle;
+                        thumbUrl.value = state.thumbUrl;
+                        topTitle.value = state.topTitle;
+                        importantOption.value = state.importantOption;
+                        showMarkOption.value = state.showMarkOption;
+                    }
+                },
+                updateButtons: function() {
+                    undoBtn.disabled = this.currentIndex <= 0;
+                    redoBtn.disabled = this.currentIndex >= this.states.length - 1;
+                }
+            };
+            
+            // 初始化历史记录
+            history.saveState();
+            
+            // 保存状态的防抖函数
+            let saveTimeout;
+            function saveStateDebounced() {
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => {
+                    history.saveState();
+                }, 300);
+            }
+            
+            // 监听所有输入变化
+            inputText.addEventListener('input', saveStateDebounced);
+            thumbTitle.addEventListener('input', saveStateDebounced);
+            thumbUrl.addEventListener('input', saveStateDebounced);
+            topTitle.addEventListener('input', saveStateDebounced);
+            importantOption.addEventListener('change', saveStateDebounced);
+            showMarkOption.addEventListener('change', saveStateDebounced);
+            
+            // 撤销/重做事件
+            undoBtn.addEventListener('click', function() {
+                history.undo();
+            });
+            
+            redoBtn.addEventListener('click', function() {
+                history.redo();
+            });
+            
+            // 键盘快捷键支持
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === 'z') {
+                    e.preventDefault();
+                    history.undo();
+                } else if (e.ctrlKey && e.key === 'y') {
+                    e.preventDefault();
+                    history.redo();
+                }
+            });
+            
+            // 颜色选择器
+            document.querySelectorAll('.color-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    // 移除所有选中状态
+                    document.querySelectorAll('.color-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    // 添加当前选中状态
+                    this.classList.add('selected');
+                    
+                    // 更新选中的颜色
+                    selectedColor = this.getAttribute('data-color');
+                });
+            });
+            
+            // 格式按钮点击事件
+            document.querySelectorAll('[data-format]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const format = this.getAttribute('data-format');
+                    
+                    // 处理颜色格式
+                    if (format === 'color') {
+                        if (getSelectionText()) {
+                            wrapSelection(`color=${selectedColor}`);
+                        } else {
+                            alert('请先选中需要添加颜色的文本');
+                        }
+                        return;
+                    }
+                    
+                    // 处理对齐格式
+                    if (format.startsWith('align="')) {
+                        wrapSelection(format);
+                    } 
+                    // 处理其他格式
+                    else {
+                        wrapSelection(format);
+                    }
+                    
+                    // 保存状态
+                    saveStateDebounced();
+                });
+            });
+            
+            // 添加链接按钮
+            linkButton.addEventListener('click', function() {
+                if (getSelectionText()) {
+                    document.getElementById('linkUrl').focus();
+                } else {
+                    alert('请先选中需要添加链接的文本');
+                }
+            });
+            
+            // 确认添加链接
+            addLinkButton.addEventListener('click', function() {
+                const url = linkUrl.value.trim();
+                if (!url) {
+                    alert('请输入链接地址');
+                    return;
+                }
+                
+                const selectedText = getSelectionText();
+                if (!selectedText) {
+                    alert('请先选中需要添加链接的文本');
+                    return;
+                }
+                
+                // 获取选中的文本并应用链接
+                const formattedText = `<link=${url}>${selectedText}</link>`;
+                replaceSelection(formattedText);
+                
+                // 保存状态
+                saveStateDebounced();
+            });
+            
+            // 添加图片
+            imageButton.addEventListener('click', function() {
+                const url = imageUrl.value.trim();
+                if (!url) {
+                    alert('请输入图片地址');
+                    return;
+                }
+                
+                // 在当前光标位置插入图片
+                const imgEntry = `{ "_type" : 2, "_content" : "${url}" }`;
+                replaceSelection(imgEntry);
+                
+                // 保存状态
+                saveStateDebounced();
+            });
+            
+            // 生成结果
+            generateButton.addEventListener('click', function() {
+                // 验证必填字段
+                if (!thumbTitle.value.trim()) {
+                    alert('缩略图标题不能为空');
+                    thumbTitle.focus();
+                    return;
+                }
+                
+                if (!thumbUrl.value.trim()) {
+                    alert('缩略图网址不能为空');
+                    thumbUrl.focus();
+                    return;
+                }
+                
+                if (!topTitle.value.trim()) {
+                    alert('顶部标题不能为空');
+                    topTitle.focus();
+                    return;
+                }
+                
+                const important = importantOption.value === 'true';
+                const showMark = showMarkOption.value === 'true';
+                
+                const textContent = inputText.value;
+                
+                // 创建cells数组
+                const cells = [];
+                
+                // 添加顶部标题单元
+                if (topTitle.value.trim()) {
+                    cells.push({
+                        "_type": 0,
+                        "_content": topTitle.value.trim()
+                    });
+                }
+                
+                // 处理文本内容
+                const lines = textContent.split(/\n/);
+                let currentCell = null;
+                
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    
+                    // 跳过空行
+                    if (!line) continue;
+                    
+                    // 检查是否是图片行
+                    if (line.startsWith('{ "_type" : 2, "_content" :')) {
+                        const imgMatch = line.match(/{ "_type" : 2, "_content" : "([^"]+)" }/);
+                        if (imgMatch && imgMatch[1]) {
+                            // 如果当前有未完成的文本单元，先添加
+                            if (currentCell) {
+                                cells.push(currentCell);
+                                currentCell = null;
+                            }
+                            
+                            // 添加图片单元
+                            cells.push({
+                                "_type": 2,
+                                "_content": imgMatch[1]
+                            });
+                        }
+                    } else {
+                        // 处理普通文本
+                        if (!currentCell) {
+                            currentCell = {
+                                "_type": 1,
+                                "_content": line
+                            };
+                        } else {
+                            currentCell._content += "\n" + line;
+                        }
+                    }
+                }
+                
+                // 添加最后的文本单元
+                if (currentCell) {
+                    cells.push(currentCell);
+                }
+                
+                // 创建最终JSON对象
+                const result = {
+                    "titleText": thumbTitle.value.trim(),
+                    "titleTexture": thumbUrl.value.trim(),
+                    "important": important,
+                    "showMark": showMark,
+                    "cells": cells
+                };
+                
+                // 生成格式化JSON字符串
+                const jsonString = JSON.stringify(result, null, 4);
+                
+                // 显示结果
+                preview.textContent = jsonString;
+            });
+            
+            // 清空输入
+            clearButton.addEventListener('click', function() {
+                inputText.value = "";
+                thumbTitle.value = "";
+                thumbUrl.value = "";
+                topTitle.value = "";
+                importantOption.value = "true";
+                showMarkOption.value = "true";
+                
+                // 保存状态
+                saveStateDebounced();
+                
+                // 清空预览
+                preview.textContent = "";
+            });
+            
+            // 获取选中的文本
+            function getSelectionText() {
+                const start = inputText.selectionStart;
+                const end = inputText.selectionEnd;
+                return inputText.value.substring(start, end);
+            }
+            
+            // 替换选中的文本
+            function replaceSelection(replacement) {
+                const start = inputText.selectionStart;
+                const end = inputText.selectionEnd;
+                const value = inputText.value;
+                
+                inputText.value = value.substring(0, start) + replacement + value.substring(end);
+                
+                // 保持光标位置
+                inputText.selectionStart = inputText.selectionEnd = start + replacement.length;
+                inputText.focus();
+            }
+            
+            // 包裹选中的文本
+            function wrapSelection(tag) {
+                const selectedText = getSelectionText();
+                if (!selectedText) {
+                    alert('请先选中需要格式化的文本');
+                    return;
+                }
+                
+                const startTag = `<${tag}>`;
+                const endTag = `</${tag.split(' ')[0]}>`; // 处理带参数的标签
+                const formattedText = startTag + selectedText + endTag;
+                
+                replaceSelection(formattedText);
+            }
+            
+            // 移除了初始生成，确保页面加载时不触发验证
+        });
+    </script>
+</body>
+</html>
