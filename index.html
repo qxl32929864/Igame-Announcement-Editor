@@ -316,9 +316,9 @@
             </div>
             
             <div class="form-group">
-                <label>顶部标题 <span class="required">*</span></label>
+                <label>标题内容 <span class="required">*</span></label>
                 <input type="text" id="topTitle" placeholder="例如：内部测试版本更新公告">
-                <span class="hint">(14字及以内)</span>
+                <span class="hint">(20字及以内)</span>
             </div>
             
             <div class="form-group">
@@ -372,12 +372,12 @@
             <div class="special-controls">
                 <div class="control-group">
                     <label for="linkUrl">链接地址:</label>
-                    <input type="text" id="linkUrl" placeholder="https://example.com    " value="http://www.baidu.com">
+                    <input type="text" id="linkUrl" placeholder="https://example.com      " value="http://www.baidu.com">
                 </div>
                 
                 <div class="control-group">
                     <label for="imageUrl">图片地址:</label>
-                    <input type="text" id="imageUrl" placeholder="https://example.com/image.png    " value="http://10.236.13.23:8088/texture/10.png">
+                    <input type="text" id="imageUrl" placeholder="https://example.com/image.png      " value="http://10.236.13.23:8088/texture/10.png">
                     <span class="hint">高度建议不超过668，宽度最多390</span>
                 </div>
                 
@@ -431,10 +431,8 @@
     "titleTexture" : "http://10.236.13.23:8088/title/title02.png",
     "important" : true,
     "showMark" : true,
+    "headText": "内部测试版本更新公告",
     "cells" : [ {
-      "_type" : 0,
-      "_content" : "内部测试版本更新公告"
-    }, {
       "_type" : 2,
       "_content" : "http://10.236.13.23:8088/texture/10.png"
     }, {
@@ -679,7 +677,7 @@
                 }
                 
                 if (!topTitle.value.trim()) {
-                    alert('顶部标题不能为空');
+                    alert('标题内容不能为空');
                     topTitle.focus();
                     return;
                 }
@@ -691,14 +689,6 @@
                 
                 // 创建cells数组
                 const cells = [];
-                
-                // 添加顶部标题单元
-                if (topTitle.value.trim()) {
-                    cells.push({
-                        "_type": 0,
-                        "_content": topTitle.value.trim()
-                    });
-                }
                 
                 // 处理文本内容
                 const lines = textContent.split(/\n/);
@@ -750,6 +740,7 @@
                     "titleTexture": thumbUrl.value.trim(),
                     "important": important,
                     "showMark": showMark,
+                    "headText": topTitle.value.trim(),  // 修改点：将顶部标题移到cells外部
                     "cells": cells
                 };
                 
