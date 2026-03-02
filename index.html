@@ -194,6 +194,7 @@
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
+            align-items: center;
         }
         
         .color-option {
@@ -213,6 +214,38 @@
             border: 2px solid #333;
             transform: scale(1.1);
         }
+
+        .color-separator {
+            width: 2px;
+            height: 20px;
+            background-color: #ccc;
+            margin: 0 4px;
+        }
+
+        .custom-color-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .custom-color-group input[type="color"] {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            border: none;
+            cursor: pointer;
+            background: none;
+        }
+
+        .custom-color-group input[type="text"] {
+            width: 100px;
+            padding: 6px 8px;
+        }
+
+        .custom-color-group button {
+            padding: 6px 12px;
+        }
         
         .generate-btn {
             background: #27ae60;
@@ -230,7 +263,6 @@
             background: #219653;
         }
         
-        /* 按钮组容器，用于并排显示清空和导入按钮 */
         .btn-group {
             display: flex;
             gap: 10px;
@@ -334,17 +366,17 @@
             </div>
             
             <div class="form-group">
-                <label>缩略图标题 <span class="required">*</span></label>
+                <label>缩略图标题（6字及以内） <span class="required">*</span></label>
                 <input type="text" id="thumbTitle" placeholder="例如：版本更新公告">
             </div>
             
             <div class="form-group">
-                <label>缩略图网址 <span class="required">*</span></label>
+                <label>缩略图网址（公告后台-资源管理获取） <span class="required">*</span></label>
                 <input type="text" id="thumbUrl" placeholder="例如：http://example.com/title.png">
             </div>
             
             <div class="form-group">
-                <label>标题内容 <span class="required">*</span></label>
+                <label>标题内容（15字及以内） <span class="required">*</span></label>
                 <input type="text" id="topTitle" placeholder="例如：内部测试版本更新公告">
             </div>
             
@@ -405,19 +437,34 @@
                 
                 <div class="control-group">
                     <label>颜色选择:</label>
-                    <div class="color-picker">
-                        <div class="color-option" style="background-color: #FF0000" data-color="#FF0000"></div>
-                        <div class="color-option" style="background-color: #0000FF" data-color="#0000FF"></div>
-                        <div class="color-option" style="background-color: #00FF00" data-color="#00FF00"></div>
-                        <div class="color-option" style="background-color: #FFFF00" data-color="#FFFF00"></div>
-                        <div class="color-option" style="background-color: #FF00FF" data-color="#FF00FF"></div>
-                        <div class="color-option" style="background-color: #00FFFF" data-color="#00FFFF"></div>
-                        <div class="color-option" style="background-color: #FFFFFF" data-color="#FFFFFF"></div>
-                        <div class="color-option" style="background-color: #000000" data-color="#000000"></div>
-                        <div class="color-option" style="background-color: #FFA500" data-color="#FFA500"></div>
-                        <div class="color-option" style="background-color: #800080" data-color="#800080"></div>
-                        <div class="color-option" style="background-color: #008080" data-color="#008080"></div>
-                        <div class="color-option" style="background-color: #808080" data-color="#808080"></div>
+                    <div class="color-picker" id="colorPickerContainer">
+                        <div class="color-option selected" style="background-color: #49a455" data-color="#49a455" title="淡绿色"></div>
+                        <div class="color-option" style="background-color: #ff7909" data-color="#ff7909" title="淡橙色"></div>
+                        <div class="color-option" style="background-color: #271d07" data-color="#271d07" title="加粗深色"></div>
+                        
+                        <div class="color-separator"></div>
+                        
+                        <div class="color-option" style="background-color: #5093e0" data-color="#5093e0" title="淡蓝色"></div>
+                        <div class="color-option" style="background-color: #c359de" data-color="#c359de" title="淡紫色"></div>
+                        <div class="color-option" style="background-color: #ff3434" data-color="#ff3434" title="红色"></div>
+                        
+                        <div class="color-separator"></div>
+
+                        <div class="color-option" style="background-color: #00FF00" data-color="#00FF00" title="绿色"></div>
+                        <div class="color-option" style="background-color: #FFFF00" data-color="#FFFF00" title="黄色"></div>
+                        <div class="color-option" style="background-color: #FFD700" data-color="#FFD700" title="金色"></div>
+                        <div class="color-option" style="background-color: #FFC0CB" data-color="#FFC0CB" title="粉色"></div>
+                        <div class="color-option" style="background-color: #A52A2A" data-color="#A52A2A" title="棕色"></div>
+                        <div class="color-option" style="background-color: #00FFFF" data-color="#00FFFF" title="青色"></div>
+                        <div class="color-option" style="background-color: #008080" data-color="#008080" title="深青色"></div>
+                        <div class="color-option" style="background-color: #808080" data-color="#808080" title="灰色"></div>
+                    </div>
+
+                    <div class="custom-color-group">
+                        <label style="margin: 0; font-weight: normal;">自定义:</label>
+                        <input type="color" id="nativeColorPicker" value="#49a455" title="点击打开调色板">
+                        <input type="text" id="customColorInput" value="#49a455" placeholder="#RRGGBB">
+                        <button id="applyCustomColor" class="history-btn">确定应用</button>
                     </div>
                 </div>
                 
@@ -475,21 +522,24 @@
             const imageButton = document.getElementById('imageButton');
             const generateButton = document.getElementById('generateButton');
             const clearButton = document.getElementById('clearButton');
-            const importButton = document.getElementById('importButton'); // 新增导入按钮
+            const importButton = document.getElementById('importButton');
             const undoBtn = document.getElementById('undoBtn');
             const redoBtn = document.getElementById('redoBtn');
             const copyButton = document.getElementById('copyButton');
             
-            // 必填字段
             const thumbTitle = document.getElementById('thumbTitle');
             const thumbUrl = document.getElementById('thumbUrl');
             const topTitle = document.getElementById('topTitle');
             const importantOption = document.getElementById('importantOption');
             const showMarkOption = document.getElementById('showMarkOption');
             
-            let selectedColor = "#FF0000";
+            // 颜色功能变量初始化
+            let selectedColor = "#49a455"; // 默认设置为第一个淡绿色
+            const nativeColorPicker = document.getElementById('nativeColorPicker');
+            const customColorInput = document.getElementById('customColorInput');
+            const applyCustomColor = document.getElementById('applyCustomColor');
+            const colorOptions = document.querySelectorAll('.color-option');
             
-            // 历史记录栈 (保持不变)
             const history = {
                 states: [],
                 currentIndex: -1,
@@ -554,7 +604,6 @@
                 }, 300);
             }
             
-            // 监听所有输入变化
             inputText.addEventListener('input', saveStateDebounced);
             thumbTitle.addEventListener('input', saveStateDebounced);
             thumbUrl.addEventListener('input', saveStateDebounced);
@@ -570,16 +619,55 @@
                 else if (e.ctrlKey && e.key === 'y') { e.preventDefault(); history.redo(); }
             });
             
-            // 颜色选择器
-            document.querySelectorAll('.color-option').forEach(option => {
+            // 统一更新颜色的方法
+            function updateActiveColor(colorVal) {
+                selectedColor = colorVal;
+                nativeColorPicker.value = colorVal;
+                customColorInput.value = colorVal;
+                
+                // 遍历预设色块，匹配的加上高亮，不匹配的移除
+                colorOptions.forEach(opt => {
+                    if (opt.getAttribute('data-color').toLowerCase() === colorVal.toLowerCase()) {
+                        opt.classList.add('selected');
+                    } else {
+                        opt.classList.remove('selected');
+                    }
+                });
+            }
+
+            // 1. 预设颜色点击事件
+            colorOptions.forEach(option => {
                 option.addEventListener('click', function() {
-                    document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('selected'));
-                    this.classList.add('selected');
-                    selectedColor = this.getAttribute('data-color');
+                    updateActiveColor(this.getAttribute('data-color'));
                 });
             });
+
+            // 2. 原生系统颜色选择器事件
+            nativeColorPicker.addEventListener('input', function() {
+                updateActiveColor(this.value);
+            });
+
+            // 3. 自定义输入框应用按钮事件
+            applyCustomColor.addEventListener('click', function() {
+                let inputVal = customColorInput.value.trim();
+                
+                // 自动补全井号
+                if (!inputVal.startsWith('#')) {
+                    inputVal = '#' + inputVal;
+                }
+                
+                // 正则校验：必须是6位十六进制颜色值
+                const hexRegex = /^#[0-9A-Fa-f]{6}$/i;
+                if (!hexRegex.test(inputVal)) {
+                    alert("颜色代码格式错误！\n请输入有效的6位十六进制颜色值，例如：#FF0000 或 #49a455");
+                    // 格式错误时恢复为上一次正常的颜色
+                    customColorInput.value = selectedColor; 
+                    return;
+                }
+                
+                updateActiveColor(inputVal);
+            });
             
-            // 格式按钮
             document.querySelectorAll('[data-format]').forEach(button => {
                 button.addEventListener('click', function() {
                     const format = this.getAttribute('data-format');
@@ -613,9 +701,6 @@
                 saveStateDebounced();
             });
 
-            // ==========================================
-            // 新增功能：解析 JSON (导入)
-            // ==========================================
             importButton.addEventListener('click', function() {
                 const rawInput = inputText.value.trim();
                 if (!rawInput) {
@@ -626,35 +711,29 @@
                 try {
                     const data = JSON.parse(rawInput);
 
-                    // 1. 填充头部表单
                     if (data.titleText) thumbTitle.value = data.titleText;
                     if (data.titleTexture) thumbUrl.value = data.titleTexture;
                     if (data.headText) topTitle.value = data.headText;
                     if (data.important !== undefined) importantOption.value = data.important.toString();
                     if (data.showMark !== undefined) showMarkOption.value = data.showMark.toString();
 
-                    // 2. 解析 Body 内容
                     let restoredBody = "";
                     if (data.cells && Array.isArray(data.cells)) {
                         const cellParts = [];
                         data.cells.forEach(cell => {
                             if (cell._type === 2) {
-                                // 还原图片格式
                                 cellParts.push(`{ "_type" : 2, "_content" : "${cell._content}" }`);
                             } else if (cell._type === 1) {
-                                // 还原文本内容
                                 cellParts.push(cell._content);
                             }
                         });
-                        // 用换行符拼接所有单元
                         restoredBody = cellParts.join('\n');
                     }
 
-                    // 3. 填回输入框
                     inputText.value = restoredBody;
                     
                     alert('导入成功！您可以开始编辑了。');
-                    saveStateDebounced(); // 保存到历史记录
+                    saveStateDebounced(); 
 
                 } catch (e) {
                     console.error(e);
@@ -662,7 +741,6 @@
                 }
             });
             
-            // 生成结果
             generateButton.addEventListener('click', function() {
                 if (!thumbTitle.value.trim() || !thumbUrl.value.trim() || !topTitle.value.trim()) {
                     alert('请填写所有带 * 的必填项');
@@ -674,7 +752,6 @@
                 const textContent = inputText.value;
                 const cells = [];
                 
-                // 按换行符分割，但保留空行逻辑
                 const lines = textContent.split(/\n/);
                 let currentCell = null;
                 
@@ -682,7 +759,6 @@
                     let line = lines[i];
                     
                     if (line.trim().startsWith('{ "_type" : 2, "_content" :')) {
-                        // 宽松匹配图片JSON字符串
                         const imgMatch = line.match(/"_content"\s*:\s*"([^"]+)"/);
                         if (imgMatch && imgMatch[1]) {
                             if (currentCell) {
@@ -692,7 +768,6 @@
                             cells.push({ "_type": 2, "_content": imgMatch[1] });
                         }
                     } else {
-                        // 【修复点1】防止双重转义，确保输入框里的 \n 变成真正的换行
                         line = line.replace(/\\n/g, '\n');
 
                         if (!currentCell) {
@@ -728,7 +803,6 @@
                 }
             });
 
-            // 【复制功能】
             copyButton.addEventListener('click', function() {
                 const content = preview.textContent;
                 if (!content) { alert('请先生成结果'); return; }
@@ -758,6 +832,7 @@
                 inputText.focus();
             }
             
+            // 严格保持原有的闭合标签生成逻辑不变：</color=#FF0000>
             function wrapSelection(tag) {
                 const selectedText = getSelectionText();
                 if (!selectedText) { alert('请先选中需要格式化的文本'); return; }
